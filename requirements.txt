@@ -1,0 +1,6 @@
+flask
+requests
+redis
+easygui
+flask_restplus
+flask_cors
