@@ -3,6 +3,7 @@ from flask import Flask, request, redirect, flash, jsonify, render_template, sen
 import requests
 import os
 import logging
+import shutil
 
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -60,8 +61,8 @@ class BucketActions(Resource):
     def delete(self, bucket):
         if os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], bucket)):
             # delete bucket
-            fileops.deletebucket(bucket)
-            os.removedirs(app.config['UPLOAD_FOLDER'] + bucket)
+            shutil.rmtree(app.config['UPLOAD_FOLDER'] + bucket)
+        fileops.deletebucket(bucket)
 
 
 @ns.route('/api/v1/buckets/<bucket>/<object_name>', methods=['POST', 'DELETE'], endpoint='object actions')
@@ -73,8 +74,9 @@ class ObjectActions(Resource):
 
     def delete(self, bucket, object_name):
         # delete object
+        if os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], bucket + '/' + object_name)):
+            os.remove(app.config['UPLOAD_FOLDER'] + bucket + '/' + object_name)
         fileops.removeobjectmetadata(bucket, object_name)
-        os.remove(app.config['UPLOAD_FOLDER'] + bucket + '/' + object_name)
         return 'OK'
 
 

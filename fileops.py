@@ -2,7 +2,6 @@ from redis import StrictRedis
 import os
 import logging
 
-
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
 
@@ -43,7 +42,8 @@ def getbucketinfo(bucket):
 def deletebucket(bucket):
     r = get_redis_client()
     r.hdel("buckets", bucket)
-    return
+    r.delete("bucket_{0}".format(bucket))
+    return 'OK'
 
 
 # TODO check if bucket already exists. Should bucket be a hashset?
